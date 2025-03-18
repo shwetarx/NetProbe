@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Port Scanner{% endblock %}
+
+{% block content %}
+<h2>Port Scanner</h2>
+<form id="scan-form">
+    <div class="mb-3">
+        <label for="ip" class="form-label">Target IP:</label>
+        <input type="text" class="form-control" id="ip" placeholder="Enter IP address">
+    </div>
+    <div class="mb-3">
+        <label for="ports" class="form-label">Ports (comma-separated):</label>
+        <input type="text" class="form-control" id="ports" placeholder="e.g., 22,80,443">
+    </div>
+    <button type="submit" class="btn btn-success">Scan</button>
+</form>
+
+<div id="result" class="mt-4"></div>
+{% endblock %}

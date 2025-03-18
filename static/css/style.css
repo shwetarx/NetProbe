@@ -1,0 +1,22 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+.navbar {
+    margin-bottom: 20px;
+}
+
+form {
+    max-width: 600px;
+}
+
+#result {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border: 1px solid #ccc;
+    margin-top: 20px;
+}
