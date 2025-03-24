@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Existing Port Scanner logic
     const scanForm = document.getElementById("scan-form");
     if (scanForm) {
         scanForm.addEventListener("submit", async (e) => {
@@ -26,6 +27,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 resultHtml += "</ul>";
                 resultDiv.innerHTML = resultHtml;
+            } catch (error) {
+                resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        });
+    }
+
+    // Whois Form Logic
+    const whoisForm = document.getElementById("whois-form");
+    if (whoisForm) {
+        whoisForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const domain = document.getElementById("domain").value;
+            const resultDiv = document.getElementById("whois-result");
+
+            resultDiv.innerHTML = "<p>Looking up domain...</p>";
+
+            try {
+                const response = await fetch("/whois", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ domain }),
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    resultDiv.innerHTML = `<p class="text-danger">Error: ${data.error}</p>`;
+                } else {
+                    let resultHtml = "<h4>Whois Information:</h4><ul>";
+                    for (const [key, value] of Object.entries(data)) {
+                        resultHtml += `<li><strong>${key}:</strong> ${value}</li>`;
+                    }
+                    resultHtml += "</ul>";
+                    resultDiv.innerHTML = resultHtml;
+                }
             } catch (error) {
                 resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
             }

@@ -104,18 +104,21 @@ def reversedns():
 # --------------------------
 # 5. Whois Lookup
 # --------------------------
-@app.route('/whois', methods=['POST'])
-def whois_lookup():
-    data = request.json
-    domain = data.get('domain')
-    if not is_valid_domain(domain):
-        return jsonify({"error": "Invalid domain"})
-    try:
-        w = whois.whois(domain)
-        result = dict(w)
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({"error": str(e)})
+@app.route('/whois', methods=['GET', 'POST'])
+def whois_page():
+    if request.method == 'GET':
+        return render_template('whois.html')
+    else:
+        data = request.json
+        domain = data.get('domain')
+        if not is_valid_domain(domain):
+            return jsonify({"error": "Invalid domain"})
+        try:
+            w = whois.whois(domain)
+            result = dict(w)
+            return jsonify(result)
+        except Exception as e:
+            return jsonify({"error": str(e)})
 
 
 
@@ -135,7 +138,5 @@ def index():
     return render_template('index.html')
 
 
-
 if __name__ == '__main__':
     app.run(debug=True)
-

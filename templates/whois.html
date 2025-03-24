@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Whois Lookup{% endblock %}
+
+{% block content %}
+<h2>Whois Lookup</h2>
+<form id="whois-form">
+    <div class="mb-3">
+        <label for="domain" class="form-label">Domain Name:</label>
+        <input type="text" class="form-control" id="domain" placeholder="Enter domain (e.g., example.com)">
+    </div>
+    <button type="submit" class="btn btn-primary">Lookup</button>
+</form>
+
+<div id="whois-result" class="mt-4"></div>
+{% endblock %}
