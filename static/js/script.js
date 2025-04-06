@@ -70,4 +70,44 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+        // Geo Lookup Logic
+    const geoForm = document.getElementById("geo-form");
+    if (geoForm) {
+        geoForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const ip = document.getElementById("geo-ip").value;
+            const resultDiv = document.getElementById("geo-result");
+
+            resultDiv.innerHTML = "<p>Looking up location...</p>";
+
+            try {
+                const response = await fetch("/geolookup", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ ip }),
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    resultDiv.innerHTML = `<p class="text-danger">Error: ${data.error}</p>`;
+                } else {
+                    let html = `<h4>Geolocation Info:</h4><ul>`;
+                    for (const [key, value] of Object.entries(data)) {
+                        html += `<li><strong>${key}:</strong> ${value}</li>`;
+                    }
+                    html += "</ul>";
+                    resultDiv.innerHTML = html;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        });
+    }
+    
+
 });

@@ -72,18 +72,22 @@ def subdomain():
 # --------------------------
 # 3. IP & Geolocation Lookup
 # --------------------------
-@app.route('/geolookup', methods=['POST'])
+@app.route('/geolookup', methods=['GET', 'POST'])
 def geolookup():
-    data = request.json
-    ip = data.get('ip')
-    if not is_valid_ip(ip):
-        return jsonify({"error": "Invalid IP address"})
-    try:
-        response = requests.get(f"http://ip-api.com/json/{ip}")
-        response.raise_for_status()
-        return jsonify(response.json())
-    except Exception as e:
-        return jsonify({"error": str(e)})
+    if request.method == 'GET':
+        return render_template('geolookup.html')
+    else:
+        data = request.json
+        ip = data.get('ip')
+        if not is_valid_ip(ip):
+            return jsonify({"error": "Invalid IP address"})
+        try:
+            response = requests.get(f"http://ip-api.com/json/{ip}")
+            response.raise_for_status()
+            return jsonify(response.json())
+        except Exception as e:
+            return jsonify({"error": str(e)})
+
 
 
 # --------------------------
