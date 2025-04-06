@@ -3,9 +3,31 @@
 {% block title %}NetProbe - Home{% endblock %}
 
 {% block content %}
-<div class="text-center">
-    <h1>Welcome to NetProbe</h1>
-    <p class="lead">Network scanning and analysis made easy!</p>
-    <a href="/scan" class="btn btn-primary mt-3">Start Scanning</a>
+<div class="text-center text-light mb-5">
+    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="NetProbe Logo" class="mb-4" style="max-width: 150px;">
+    <h1 class="display-5 fw-bold">NetProbe</h1>
+    <p class="lead">Scan. Detect. Protect. — A network toolkit for professionals and enthusiasts.</p>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for tool in [
+        ('Port Scanner', '/scan', 'Scan open ports'),
+        ('Whois Lookup', '/whois', 'Find domain info'),
+        ('Geo Lookup', '/geolookup', 'Locate IP addresses'),
+        ('Reverse DNS', '/reversedns', 'Resolve hostnames'),
+        ('Subdomain Scanner', '/subdomain', 'Discover subdomains'),
+        ('Traceroute', '/traceroute', 'Trace network path'),
+        ('HTTP Headers', '/headers', 'Inspect website headers')
+    ] %}
+    <div class="col">
+        <div class="card h-100 bg-dark text-light border-secondary shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">{{ tool[0] }}</h5>
+                <p class="card-text">{{ tool[2] }}</p>
+                <a href="{{ tool[1] }}" class="btn btn-outline-light">Go</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}

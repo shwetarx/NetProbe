@@ -1,13 +1,20 @@
 body {
-    font-family: Arial, sans-serif;
-}
-
-h1, h2, h3 {
-    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #121212;
+    color: #f0f0f0;
 }
 
 .navbar {
     margin-bottom: 20px;
+    background-color: #1e1e1e !important;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.02);
 }
 
 form {
@@ -15,8 +22,9 @@ form {
 }
 
 #result {
-    background-color: #f9f9f9;
+    background-color: #1f1f1f;
+    color: #ddd;
     padding: 15px;
-    border: 1px solid #ccc;
+    border: 1px solid #333;
     margin-top: 20px;
 }

@@ -151,4 +151,82 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     
+
+            // Subdomain Scanner
+    const subForm = document.getElementById("subdomain-form");
+    if (subForm) {
+        subForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const domain = document.getElementById("domain").value;
+            const subdomains = document.getElementById("subdomains").value;
+            const resultDiv = document.getElementById("subdomain-result");
+
+            resultDiv.innerHTML = "<p>Scanning for subdomains...</p>";
+
+            try {
+                const response = await fetch("/subdomain", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ domain, subdomains }),
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    resultDiv.innerHTML = `<p class="text-danger">Error: ${data.error}</p>`;
+                } else if (data.length === 0) {
+                    resultDiv.innerHTML = "<p>No subdomains found.</p>";
+                } else {
+                    let html = `<h4>Found Subdomains:</h4><ul>`;
+                    data.forEach(entry => {
+                        html += `<li><strong>${entry.subdomain}</strong> → ${entry.ip}</li>`;
+                    });
+                    html += "</ul>";
+                    resultDiv.innerHTML = html;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        });
+    }
+    
+
+    //Traceroute
+    document.addEventListener("DOMContentLoaded", () => {
+        const traceForm = document.getElementById("traceroute-form");
+        if (traceForm) {
+            traceForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+    
+                const target = document.getElementById("target").value;
+                const output = document.getElementById("trace-output");
+    
+                output.textContent = "Running traceroute...";
+    
+                try {
+                    const res = await fetch("/traceroute", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ target }),
+                    });
+    
+                    const data = await res.json();
+                    if (data.error) {
+                        output.textContent = `Error: ${data.error}`;
+                    } else {
+                        output.textContent = data.output;
+                    }
+                } catch (err) {
+                    output.textContent = `Error: ${err.message}`;
+                }
+            });
+        }
+    });
+    
+    
 });

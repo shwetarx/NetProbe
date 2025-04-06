@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}HTTP Header Viewer{% endblock %}
+
+{% block content %}
+<h2>HTTP Header Viewer</h2>
+<form id="header-form">
+    <div class="mb-3">
+        <label for="url" class="form-label">Enter URL:</label>
+        <input type="text" class="form-control" id="url" placeholder="e.g., example.com or https://example.com">
+    </div>
+    <button type="submit" class="btn btn-warning">Fetch Headers</button>
+</form>
+
+<div id="header-results" class="mt-4"></div>
+{% endblock %}

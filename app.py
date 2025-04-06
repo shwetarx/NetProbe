@@ -5,7 +5,8 @@ import ssl
 import requests
 import whois
 import re
-
+import platform
+import subprocess
 app = Flask(__name__, template_folder='templates')
 
 
@@ -51,12 +52,16 @@ def scan():
 # --------------------------
 # 2. Subdomain Scanner
 # --------------------------
-@app.route('/subdomain', methods=['POST'])
+@app.route('/subdomain', methods=['GET', 'POST'])
 def subdomain():
+    if request.method == 'GET':
+        return render_template('subdomain.html')
+
     data = request.json
     domain = data.get('domain')
     if not is_valid_domain(domain):
         return jsonify({"error": "Invalid domain"})
+
     subdomains = data.get('subdomains', "www,mail,dev,ftp,api").split(',')
     found = []
     for sub in subdomains:
@@ -67,6 +72,7 @@ def subdomain():
         except socket.gaierror:
             continue
     return jsonify(found)
+
 
 
 # --------------------------
@@ -131,7 +137,67 @@ def whois_page():
             return jsonify(result)
         except Exception as e:
             return jsonify({"error": str(e)})
+        
+#---------------------------
+#Traceroute
+#---------------------------
+@app.route('/traceroute', methods=['GET', 'POST'])
+def traceroute_page():
+    if request.method == 'POST':
+        data = request.json
+        target = data.get('target')
 
+        if not target:
+            return jsonify({"error": "No target provided"})
+
+        try:
+            import platform
+            system = platform.system()
+
+            if system == "Windows":
+                cmd = ["tracert", target]
+            else:
+                cmd = ["traceroute", target]
+
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=15)
+
+            if result.returncode != 0:
+                return jsonify({"error": result.stderr or "Traceroute failed"})
+
+            return jsonify({"output": result.stdout})
+        except Exception as e:
+            return jsonify({"error": str(e)})
+
+    # If GET request, render the page
+    return render_template('traceroute.html')
+
+    
+    
+#---------------------------
+#HTTP Header View
+#---------------------------
+@app.route('/headers')
+def header_viewer_page():
+    return render_template('headers.html')
+
+@app.route('/headers', methods=['POST'])
+def headers():
+    data = request.json
+    url = data.get('url')
+
+    if not url:
+        return jsonify({"error": "No URL provided"})
+
+    # Add scheme if not included
+    if not url.startswith('http://') and not url.startswith('https://'):
+        url = 'http://' + url
+
+    try:
+        response = requests.get(url, timeout=10)
+        headers = dict(response.headers)
+        return jsonify({"headers": headers})
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 
 # --------------------------
@@ -148,6 +214,8 @@ def scan_page():
 def index():
     print("Homepage route is working!")
     return render_template('index.html')
+
+
 
 
 if __name__ == '__main__':

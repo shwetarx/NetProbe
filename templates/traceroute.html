@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Traceroute{% endblock %}
+
+{% block content %}
+<h2>Traceroute</h2>
+<form id="traceroute-form">
+    <div class="mb-3">
+        <label for="target" class="form-label">Target Domain/IP:</label>
+        <input type="text" class="form-control" id="target" placeholder="e.g., google.com">
+    </div>
+    <button type="submit" class="btn btn-primary">Run Traceroute</button>
+</form>
+
+<pre id="trace-output" class="mt-4"></pre>
+{% endblock %}

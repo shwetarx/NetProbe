@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Subdomain Scanner{% endblock %}
+
+{% block content %}
+<h2>Subdomain Scanner</h2>
+<form id="subdomain-form">
+    <div class="mb-3">
+        <label for="domain" class="form-label">Domain:</label>
+        <input type="text" class="form-control" id="domain" placeholder="example.com">
+    </div>
+    <div class="mb-3">
+        <label for="subdomains" class="form-label">Subdomains (comma-separated):</label>
+        <input type="text" class="form-control" id="subdomains" placeholder="www,mail,ftp,dev,api">
+    </div>
+    <button type="submit" class="btn btn-secondary">Scan</button>
+</form>
+
+<div id="subdomain-result" class="mt-4"></div>
+{% endblock %}
