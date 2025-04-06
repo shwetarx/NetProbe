@@ -108,6 +108,47 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-    
 
+
+
+        // Reverse DNS Lookup
+        const rdnsForm = document.getElementById("rdns-form");
+        if (rdnsForm) {
+            rdnsForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+    
+                const ip = document.getElementById("rdns-ip").value;
+                const resultDiv = document.getElementById("rdns-result");
+    
+                resultDiv.innerHTML = "<p>Resolving hostname...</p>";
+    
+                try {
+                    const response = await fetch("/reversedns", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ ip }),
+                    });
+    
+                    const data = await response.json();
+    
+                    if (data.error) {
+                        resultDiv.innerHTML = `<p class="text-danger">Error: ${data.error}</p>`;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <h4>Reverse DNS Result:</h4>
+                            <ul>
+                                <li><strong>Hostname:</strong> ${data.hostname}</li>
+                                <li><strong>Aliases:</strong> ${data.aliases.join(', ')}</li>
+                                <li><strong>IP Addresses:</strong> ${data.ip_addresses.join(', ')}</li>
+                            </ul>
+                        `;
+                    }
+                } catch (error) {
+                    resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+                }
+            });
+        }
+    
 });

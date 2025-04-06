@@ -93,17 +93,25 @@ def geolookup():
 # --------------------------
 # 4. Reverse DNS Lookup
 # --------------------------
-@app.route('/reversedns', methods=['POST'])
+@app.route('/reversedns', methods=['GET', 'POST'])
 def reversedns():
-    data = request.json
-    ip = data.get('ip')
-    if not is_valid_ip(ip):
-        return jsonify({"error": "Invalid IP address"})
-    try:
-        hostname, aliaslist, ipaddrlist = socket.gethostbyaddr(ip)
-        return jsonify({"hostname": hostname, "aliases": aliaslist, "ip_addresses": ipaddrlist})
-    except Exception as e:
-        return jsonify({"error": str(e)})
+    if request.method == 'GET':
+        return render_template('reversedns.html')
+    else:
+        data = request.json
+        ip = data.get('ip')
+        if not is_valid_ip(ip):
+            return jsonify({"error": "Invalid IP address"})
+        try:
+            hostname, aliaslist, ipaddrlist = socket.gethostbyaddr(ip)
+            return jsonify({
+                "hostname": hostname,
+                "aliases": aliaslist,
+                "ip_addresses": ipaddrlist
+            })
+        except Exception as e:
+            return jsonify({"error": str(e)})
+
 
 # --------------------------
 # 5. Whois Lookup
