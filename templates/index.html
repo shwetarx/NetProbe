@@ -1,33 +1,92 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NetProbe - Scan. Detect. Protect.</title>
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: #f0f0f0;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-{% block title %}NetProbe - Home{% endblock %}
+        header {
+            background-color: #1a1a1a;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
 
-{% block content %}
-<div class="text-center text-light mb-5">
-    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="NetProbe Logo" class="mb-4" style="max-width: 150px;">
-    <h1 class="display-5 fw-bold">NetProbe</h1>
-    <p class="lead">Scan. Detect. Protect. — A network toolkit for professionals and enthusiasts.</p>
-</div>
+        header img {
+            height: 60px;
+        }
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    {% for tool in [
-        ('Port Scanner', '/scan', 'Scan open ports'),
-        ('Whois Lookup', '/whois', 'Find domain info'),
-        ('Geo Lookup', '/geolookup', 'Locate IP addresses'),
-        ('Reverse DNS', '/reversedns', 'Resolve hostnames'),
-        ('Subdomain Scanner', '/subdomain', 'Discover subdomains'),
-        ('Traceroute', '/traceroute', 'Trace network path'),
-        ('HTTP Headers', '/headers', 'Inspect website headers')
-    ] %}
-    <div class="col">
-        <div class="card h-100 bg-dark text-light border-secondary shadow-sm">
-            <div class="card-body text-center">
-                <h5 class="card-title">{{ tool[0] }}</h5>
-                <p class="card-text">{{ tool[2] }}</p>
-                <a href="{{ tool[1] }}" class="btn btn-outline-light">Go</a>
-            </div>
-        </div>
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        nav a {
+            color: #f0f0f0;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 10px 15px;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            border-color: #00bcd4;
+            background-color: #121212;
+        }
+
+        .container {
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .container h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .container p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="NetProbe Logo">
+        <nav>
+            <a href="/scan">Port Scanner</a>
+            <a href="/subdomain">Subdomain Scanner</a>
+            <a href="/geolookup">Geolocation Lookup</a>
+            <a href="/reversedns">Reverse DNS</a>
+            <a href="/whois">Whois Lookup</a>
+            <a href="/sslinspect">SSL Inspector</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>Welcome to NetProbe</h1>
+        <p>
+            NetProbe is a comprehensive network reconnaissance toolkit designed to empower cybersecurity professionals
+            and enthusiasts with tools to scan, detect, and analyze digital assets effectively. Whether you're checking
+            open ports, verifying SSL certificates, or analyzing domain structures, NetProbe has your back.
+        </p>
     </div>
-    {% endfor %}
-</div>
-{% endblock %}
+
+</body>
+</html>

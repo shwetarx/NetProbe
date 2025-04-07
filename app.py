@@ -7,6 +7,7 @@ import whois
 import re
 import platform
 import subprocess
+import datetime
 app = Flask(__name__, template_folder='templates')
 
 
@@ -138,64 +139,47 @@ def whois_page():
         except Exception as e:
             return jsonify({"error": str(e)})
         
-#---------------------------
-#Traceroute
-#---------------------------
-@app.route('/traceroute', methods=['GET', 'POST'])
-def traceroute_page():
-    if request.method == 'POST':
-        data = request.json
-        target = data.get('target')
+ 
+#------------------------------
+#SSL Inspector
+#------------------------------
+import datetime
 
-        if not target:
-            return jsonify({"error": "No target provided"})
-
-        try:
-            import platform
-            system = platform.system()
-
-            if system == "Windows":
-                cmd = ["tracert", target]
-            else:
-                cmd = ["traceroute", target]
-
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=15)
-
-            if result.returncode != 0:
-                return jsonify({"error": result.stderr or "Traceroute failed"})
-
-            return jsonify({"output": result.stdout})
-        except Exception as e:
-            return jsonify({"error": str(e)})
-
-    # If GET request, render the page
-    return render_template('traceroute.html')
-
+@app.route('/sslinspect', methods=['GET', 'POST'])
+def ssl_inspector():
+    if request.method == 'GET':
+        return render_template('sslinspect.html')
     
-    
-#---------------------------
-#HTTP Header View
-#---------------------------
-@app.route('/headers')
-def header_viewer_page():
-    return render_template('headers.html')
-
-@app.route('/headers', methods=['POST'])
-def headers():
     data = request.json
-    url = data.get('url')
+    domain = data.get('domain')
+    
+    if not domain:
+        return jsonify({"error": "No domain provided"})
 
-    if not url:
-        return jsonify({"error": "No URL provided"})
-
-    # Add scheme if not included
-    if not url.startswith('http://') and not url.startswith('https://'):
-        url = 'http://' + url
+    # Ensure domain has no protocol
+    domain = domain.replace("https://", "").replace("http://", "").split("/")[0]
 
     try:
-        response = requests.get(url, timeout=10)
-        headers = dict(response.headers)
-        return jsonify({"headers": headers})
+        context = ssl.create_default_context()
+        with socket.create_connection((domain, 443), timeout=5) as sock:
+            with context.wrap_socket(sock, server_hostname=domain) as ssock:
+                cert = ssock.getpeercert()
+
+        # Parse certificate data
+        valid_from = datetime.datetime.strptime(cert['notBefore'], "%b %d %H:%M:%S %Y %Z")
+        valid_to = datetime.datetime.strptime(cert['notAfter'], "%b %d %H:%M:%S %Y %Z")
+        days_left = (valid_to - datetime.datetime.utcnow()).days
+
+        result = {
+            "subject": dict(x[0] for x in cert['subject']),
+            "issuer": dict(x[0] for x in cert['issuer']),
+            "valid_from": cert['notBefore'],
+            "valid_to": cert['notAfter'],
+            "days_until_expiry": days_left,
+            "expired": days_left < 0
+        }
+        return jsonify(result)
+
     except Exception as e:
         return jsonify({"error": str(e)})
 

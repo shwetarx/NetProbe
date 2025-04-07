@@ -1,41 +1,99 @@
+<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}NetProbe{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>NetProbe</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background-color: #161b22;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        nav .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        nav .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        nav a {
+            color: #58a6ff;
+            text-decoration: none;
+            margin-left: 15px;
+            font-size: 1rem;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            padding: 2rem;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h2 {
+            color: #58a6ff;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #21262d;
+            cursor: pointer;
+        }
+
+        pre {
+            background-color: #161b22;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+        }
+    </style>
 </head>
 <body>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/">NetProbe</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/scan">Port Scan</a></li>
-                <li class="nav-item"><a class="nav-link" href="/whois">Whois Lookup</a></li>
-                <li class="nav-item"><a class="nav-link" href="/geolookup">Geo Lookup</a></li>
-                <li class="nav-item"><a class="nav-link" href="/reversedns">Reverse DNS</a></li>
-                <li class="nav-item"><a class="nav-link" href="/subdomain">Subdomain Scanner</a></li>
-                <li class="nav-item"><a class="nav-link" href="/traceroute">Traceroute</a></li>
-                <li class="nav-item"><a class="nav-link" href="/headers">HTTP Headers</a></li>
-
-            </ul>
+    <nav>
+        <div class="logo">
+            <img src="../img/logo.png" alt="NetProbe Logo">
+            <a href="/">NetProbe</a>
         </div>
+        <div class="links">
+            <a href="/scan">Port Scan</a>
+            <a href="/subdomain">Subdomains</a>
+            <a href="/geolookup">Geo Lookup</a>
+            <a href="/reversedns">Reverse DNS</a>
+            <a href="/whois">Whois</a>
+            <a href="/ssl">SSL Info</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
     </div>
-</nav>
-
-<div class="container mt-4">
-    {% block content %}{% endblock %}
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
