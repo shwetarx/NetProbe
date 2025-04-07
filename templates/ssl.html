@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Whois Lookup{% endblock %}
+{% block title %}SSL Certificate Inspector{% endblock %}
 
 {% block content %}
 <div class="max-w-xl mx-auto mt-10 bg-gray-900 p-6 rounded-xl shadow-xl">
-    <h2 class="text-2xl text-white font-semibold mb-4">Whois Lookup</h2>
-    <form id="whoisForm" class="space-y-4">
+    <h2 class="text-2xl text-white font-semibold mb-4">SSL Certificate Inspector</h2>
+    <form id="sslForm" class="space-y-4">
         <input
             type="text"
             id="domain"
@@ -17,21 +17,21 @@
             type="submit"
             class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition duration-200"
         >
-            Lookup
+            Inspect SSL
         </button>
     </form>
     <div id="output" class="mt-6 bg-gray-800 p-4 rounded text-sm text-white whitespace-pre-line"></div>
 </div>
 
 <script>
-    document.getElementById("whoisForm").addEventListener("submit", async function (e) {
+    document.getElementById("sslForm").addEventListener("submit", async function (e) {
         e.preventDefault();
-        const domain = document.getElementById("domain").value;
+        const domain = document.getElementById("domain").value.trim();
         const output = document.getElementById("output");
         output.innerHTML = "";
 
         try {
-            const res = await fetch("/whois", {
+            const res = await fetch("/ssl", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ domain })
@@ -45,11 +45,10 @@
                 let html = "";
                 for (let key in data) {
                     if (data[key]) {
-                        let value = Array.isArray(data[key]) ? data[key].join(", ") : data[key];
-                        html += `<div><strong>${key}:</strong> ${value}</div>`;
+                        html += `<div><strong>${key}:</strong> ${data[key]}</div>`;
                     }
                 }
-                output.innerHTML = html || "<em>No WHOIS data found.</em>";
+                output.innerHTML = html || "<em>No certificate data found.</em>";
             }
         } catch (err) {
             output.innerHTML = `<span class="text-red-400">Error: ${err}</span>`;
