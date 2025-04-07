@@ -7,7 +7,7 @@ import whois
 import re
 import platform
 import subprocess
-import datetime
+from datetime import datetime
 app = Flask(__name__, template_folder='templates')
 
 
@@ -58,21 +58,25 @@ def subdomain():
     if request.method == 'GET':
         return render_template('subdomain.html')
 
-    data = request.json
+    data = request.get_json()
     domain = data.get('domain')
+    subdomain_input = data.get('subdomains', "www,mail,ftp,api,dev")
+
     if not is_valid_domain(domain):
         return jsonify({"error": "Invalid domain"})
 
-    subdomains = data.get('subdomains', "www,mail,dev,ftp,api").split(',')
-    found = []
-    for sub in subdomains:
-        subdomain = f"{sub.strip()}.{domain}"
+    sub_prefixes = [s.strip() for s in subdomain_input.split(',') if s.strip()]
+    results = []
+
+    for prefix in sub_prefixes:
+        sub = f"{prefix}.{domain}"
         try:
-            ip = socket.gethostbyname(subdomain)
-            found.append({"subdomain": subdomain, "ip": ip})
+            ip = socket.gethostbyname(sub)
+            results.append({"subdomain": sub, "ip": ip, "status": "found"})
         except socket.gaierror:
-            continue
-    return jsonify(found)
+            results.append({"subdomain": sub, "ip": None, "status": "not found"})
+
+    return jsonify(results)
 
 
 
@@ -143,45 +147,34 @@ def whois_page():
 #------------------------------
 #SSL Inspector
 #------------------------------
-import datetime
 
-@app.route('/sslinspect', methods=['GET', 'POST'])
-def ssl_inspector():
+@app.route('/ssl', methods=['GET', 'POST'])
+def ssl_info():
     if request.method == 'GET':
-        return render_template('sslinspect.html')
-    
-    data = request.json
-    domain = data.get('domain')
-    
-    if not domain:
-        return jsonify({"error": "No domain provided"})
+        return render_template('ssl.html')
+    else:
+        data = request.json
+        domain = data.get('domain')
 
-    # Ensure domain has no protocol
-    domain = domain.replace("https://", "").replace("http://", "").split("/")[0]
+        try:
+            ctx = ssl.create_default_context()
+            with ctx.wrap_socket(socket.socket(), server_hostname=domain) as s:
+                s.settimeout(5)
+                s.connect((domain, 443))
+                cert = s.getpeercert()
 
-    try:
-        context = ssl.create_default_context()
-        with socket.create_connection((domain, 443), timeout=5) as sock:
-            with context.wrap_socket(sock, server_hostname=domain) as ssock:
-                cert = ssock.getpeercert()
+            def format_date(d): return datetime.strptime(d, "%b %d %H:%M:%S %Y %Z").strftime("%Y-%m-%d %H:%M:%S")
 
-        # Parse certificate data
-        valid_from = datetime.datetime.strptime(cert['notBefore'], "%b %d %H:%M:%S %Y %Z")
-        valid_to = datetime.datetime.strptime(cert['notAfter'], "%b %d %H:%M:%S %Y %Z")
-        days_left = (valid_to - datetime.datetime.utcnow()).days
-
-        result = {
-            "subject": dict(x[0] for x in cert['subject']),
-            "issuer": dict(x[0] for x in cert['issuer']),
-            "valid_from": cert['notBefore'],
-            "valid_to": cert['notAfter'],
-            "days_until_expiry": days_left,
-            "expired": days_left < 0
-        }
-        return jsonify(result)
-
-    except Exception as e:
-        return jsonify({"error": str(e)})
+            return jsonify({
+                "Subject": dict(x[0] for x in cert["subject"]),
+                "Issuer": dict(x[0] for x in cert["issuer"]),
+                "Valid From": format_date(cert["notBefore"]),
+                "Valid To": format_date(cert["notAfter"]),
+                "Serial Number": cert.get("serialNumber"),
+                "Version": cert.get("version"),
+            })
+        except Exception as e:
+            return jsonify({"error": str(e)})
 
 
 # --------------------------

@@ -1,20 +1,33 @@
-{% extends 'base.html' %}
-
-{% block title %}Port Scanner{% endblock %}
+{% extends "base.html" %}
 
 {% block content %}
 <h2>Port Scanner</h2>
-<form id="scan-form">
-    <div class="mb-3">
-        <label for="ip" class="form-label">Target IP:</label>
-        <input type="text" class="form-control" id="ip" placeholder="Enter IP address">
-    </div>
-    <div class="mb-3">
-        <label for="ports" class="form-label">Ports (comma-separated):</label>
-        <input type="text" class="form-control" id="ports" placeholder="e.g., 22,80,443">
-    </div>
-    <button type="submit" class="btn btn-success">Scan</button>
+<form id="scanForm">
+    <input type="text" id="ip" name="ip" placeholder="Enter IP Address (e.g. 192.168.1.1)" required>
+    <input type="text" id="ports" name="ports" placeholder="Enter ports (e.g. 22,80,443)" required>
+    <button type="submit">Scan</button>
 </form>
 
-<div id="result" class="mt-4"></div>
+<h3>Results:</h3>
+<pre id="scanOutput">Waiting for scan...</pre>
+
+<script>
+document.getElementById("scanForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const ip = document.getElementById("ip").value;
+    const ports = document.getElementById("ports").value;
+
+    const response = await fetch("/scan", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ ip, ports })
+    });
+
+    const result = await response.json();
+    document.getElementById("scanOutput").textContent = JSON.stringify(result, null, 2);
+});
+</script>
 {% endblock %}

@@ -170,7 +170,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ domain, subdomains }),
+                    body: JSON.stringify({
+                        domain: domain,
+                        subdomains: subdomains || "www,mail,dev,ftp,api"
+                      }),
                 });
 
                 const data = await response.json();
@@ -178,15 +181,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (data.error) {
                     resultDiv.innerHTML = `<p class="text-danger">Error: ${data.error}</p>`;
                 } else if (data.length === 0) {
-                    resultDiv.innerHTML = "<p>No subdomains found.</p>";
+                    outputDiv.innerHTML = `<div class="bg-yellow-700 p-4 rounded-md">No active subdomains found for ${domain}.</div>`;
                 } else {
-                    let html = `<h4>Found Subdomains:</h4><ul>`;
-                    data.forEach(entry => {
-                        html += `<li><strong>${entry.subdomain}</strong> → ${entry.ip}</li>`;
+                    let resultHTML = `<div class="bg-gray-800 p-4 rounded-md"><h2 class="text-lg font-semibold mb-2">Active Subdomains</h2><ul class="list-disc pl-5 space-y-1">`;
+                    data.forEach(item => {
+                      resultHTML += `<li><strong>${item.subdomain}</strong> → ${item.ip}</li>`;
                     });
-                    html += "</ul>";
-                    resultDiv.innerHTML = html;
-                }
+                    resultHTML += "</ul></div>";
+                    outputDiv.innerHTML = resultHTML;
+                  }
             } catch (error) {
                 resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
             }

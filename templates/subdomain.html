@@ -1,20 +1,79 @@
-{% extends 'base.html' %}
-
-{% block title %}Subdomain Scanner{% endblock %}
+{% extends "base.html" %}
+{% block title %}Subdomain Scanner | NetProbe{% endblock %}
 
 {% block content %}
-<h2>Subdomain Scanner</h2>
-<form id="subdomain-form">
-    <div class="mb-3">
-        <label for="domain" class="form-label">Domain:</label>
-        <input type="text" class="form-control" id="domain" placeholder="example.com">
-    </div>
-    <div class="mb-3">
-        <label for="subdomains" class="form-label">Subdomains (comma-separated):</label>
-        <input type="text" class="form-control" id="subdomains" placeholder="www,mail,ftp,dev,api">
-    </div>
-    <button type="submit" class="btn btn-secondary">Scan</button>
-</form>
+<div class="container mx-auto mt-12 text-white px-4">
+  <h1 class="text-3xl font-semibold mb-6">Subdomain Scanner</h1>
 
-<div id="subdomain-result" class="mt-4"></div>
+  <form id="subdomainForm" class="space-y-4">
+    <input
+      type="text"
+      id="domain"
+      name="domain"
+      placeholder="Enter domain (e.g., example.com)"
+      required
+      class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none"
+    />
+    <input
+      type="text"
+      id="subdomains"
+      name="subdomains"
+      placeholder="Comma-separated subdomains (default: www,mail,dev,ftp,api)"
+      class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none"
+    />
+    <button
+      type="submit"
+      class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md"
+    >
+      Scan
+    </button>
+  </form>
+
+  <div id="output" class="mt-6">
+    <!-- Output will appear here -->
+  </div>
+</div>
+
+<script>
+  document.getElementById("subdomainForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const domain = document.getElementById("domain").value.trim();
+    const subdomains = document.getElementById("subdomains").value.trim();
+    const outputDiv = document.getElementById("output");
+    outputDiv.innerHTML = "";
+
+    if (!domain) {
+      outputDiv.innerHTML = `<div class="bg-red-700 p-4 rounded-md">Please enter a valid domain name.</div>`;
+      return;
+    }
+
+    outputDiv.innerHTML = `<div class="bg-gray-800 p-4 rounded-md">Scanning subdomains for <strong>${domain}</strong>...</div>`;
+
+    try {
+      const response = await fetch("/subdomain", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ domain, subdomains }),
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        outputDiv.innerHTML = `<div class="bg-red-700 p-4 rounded-md">${data.error}</div>`;
+      } else if (data.length === 0) {
+        outputDiv.innerHTML = `<div class="bg-yellow-700 p-4 rounded-md">No active subdomains found for ${domain}.</div>`;
+      } else {
+        let resultHTML = `<div class="bg-gray-800 p-4 rounded-md"><h2 class="text-lg font-semibold mb-2">Active Subdomains</h2><ul class="list-disc pl-5 space-y-1">`;
+        data.forEach(item => {
+          resultHTML += `<li><strong>${item.subdomain}</strong> → ${item.ip}</li>`;
+        });
+        resultHTML += "</ul></div>";
+        outputDiv.innerHTML = resultHTML;
+      }
+    } catch (error) {
+      outputDiv.innerHTML = `<div class="bg-red-700 p-4 rounded-md">Error: ${error.message}</div>`;
+    }
+  });
+</script>
 {% endblock %}

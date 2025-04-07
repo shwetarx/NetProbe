@@ -1,16 +1,52 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Geo Lookup{% endblock %}
+{% block title %}Geo IP Lookup - NetProbe{% endblock %}
 
 {% block content %}
-<h2>Geo Lookup</h2>
-<form id="geo-form">
-    <div class="mb-3">
-        <label for="geo-ip" class="form-label">IP Address:</label>
-        <input type="text" class="form-control" id="geo-ip" placeholder="Enter IP (e.g., 8.8.8.8)">
-    </div>
-    <button type="submit" class="btn btn-info">Lookup</button>
-</form>
+<div class="page-section">
+    <h1 class="text-3xl font-bold mb-4">Geo IP Lookup</h1>
+    <form id="geo-form" class="flex gap-2 mb-4">
+        <input type="text" id="geo-ip" class="input-field" placeholder="Enter IP Address" required>
+        <button type="submit" class="btn-primary">Lookup</button>
+    </form>
+    <div id="geo-output" class="output-box hidden"></div>
+    <div id="geo-error" class="text-red-500 mt-2 hidden"></div>
+</div>
 
-<div id="geo-result" class="mt-4"></div>
+<script>
+    document.getElementById('geo-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const ip = document.getElementById('geo-ip').value.trim();
+        const outputBox = document.getElementById('geo-output');
+        const errorBox = document.getElementById('geo-error');
+
+        // Reset previous output and errors
+        outputBox.innerHTML = '';
+        errorBox.textContent = '';
+        outputBox.classList.add('hidden');
+        errorBox.classList.add('hidden');
+
+        const response = await fetch('/geolookup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ip })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+            errorBox.textContent = data.error;
+            errorBox.classList.remove('hidden');
+        } else {
+            let html = '<h3 class="font-semibold mb-2">Geo Information</h3><ul class="list-disc pl-5">';
+            for (const [key, value] of Object.entries(data)) {
+                html += `<li><strong>${key}</strong>: ${value}</li>`;
+            }
+            html += '</ul>';
+            outputBox.innerHTML = html;
+            outputBox.classList.remove('hidden');
+        }
+    });
+</script>
+
 {% endblock %}
