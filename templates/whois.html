@@ -1,16 +1,70 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block title %}Whois Lookup{% endblock %}
 
 {% block content %}
-<h2>Whois Lookup</h2>
-<form id="whois-form">
-    <div class="mb-3">
-        <label for="domain" class="form-label">Domain Name:</label>
-        <input type="text" class="form-control" id="domain" placeholder="Enter domain (e.g., example.com)">
-    </div>
-    <button type="submit" class="btn btn-primary">Lookup</button>
-</form>
+<div class="max-w-xl mx-auto mt-10 bg-gray-900 p-6 rounded-xl shadow-xl">
+    <h2 class="text-2xl text-white font-semibold mb-4">Whois Lookup</h2>
+    <form id="whoisForm" class="space-y-4">
+        <input
+            type="text"
+            id="domain"
+            name="domain"
+            placeholder="Enter domain (e.g. example.com)"
+            class="w-full p-3 rounded bg-gray-800 text-white placeholder-gray-500"
+            required
+        />
+        <button
+            type="submit"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition duration-200"
+        >
+            Lookup
+        </button>
+    </form>
 
-<div id="whois-result" class="mt-4"></div>
+    <div id="output" class="mt-6 bg-gray-800 p-4 rounded text-sm text-white whitespace-pre-line hidden"></div>
+    <div id="error" class="mt-4 text-red-600 text-sm hidden"></div>
+</div>
+
+<script>
+    document.getElementById("whoisForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const domain = document.getElementById("domain").value.trim();
+        const output = document.getElementById("output");
+        const errorBox = document.getElementById("error");
+        
+        output.innerHTML = "";
+        errorBox.innerHTML = "";
+        output.classList.add("hidden");
+        errorBox.classList.add("hidden");
+
+        try {
+            const res = await fetch("/whois", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ domain })
+            });
+
+            const data = await res.json();
+
+            if (data.error) {
+                errorBox.textContent = data.error;
+                errorBox.classList.remove("hidden");
+            } else {
+                let html = "";
+                for (let key in data) {
+                    if (data[key]) {
+                        let value = Array.isArray(data[key]) ? data[key].join(", ") : data[key];
+                        html += `<div><strong>${key}:</strong> ${value}</div>`;
+                    }
+                }
+                output.innerHTML = html || "<em>No WHOIS data found.</em>";
+                output.classList.remove("hidden");
+            }
+        } catch (err) {
+            errorBox.textContent = `Error: ${err}`;
+            errorBox.classList.remove("hidden");
+        }
+    });
+</script>
 {% endblock %}

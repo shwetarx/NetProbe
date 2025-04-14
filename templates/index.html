@@ -1,11 +1,188 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetProbe - Scan. Detect. Protect.</title>
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: #f0f0f0;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-{% block title %}NetProbe - Home{% endblock %}
+        header {
+            background-color: #1a1a1a;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
 
-{% block content %}
-<div class="text-center">
-    <h1>Welcome to NetProbe</h1>
-    <p class="lead">Network scanning and analysis made easy!</p>
-    <a href="/scan" class="btn btn-primary mt-3">Start Scanning</a>
-</div>
-{% endblock %}
+        .branding {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .branding img {
+            height: 40px;
+        }
+
+        .branding h1 {
+            font-size: 26px;
+            color: #00bcd4;
+            margin: 0;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        nav a {
+            color: #f0f0f0;
+            text-decoration: none;
+            font-size: 15px;
+            padding: 8px 14px;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            border-color: #00bcd4;
+            background-color: #121212;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 30px 30px;
+        }
+
+        .hero .logo-title {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .hero .logo-title img {
+            height: 60px;
+        }
+
+        .hero .logo-title h1 {
+            font-size: 64px;
+            font-weight: 800;
+            color: #00bcd4;
+            margin: 0;
+        }
+
+        .hero h2 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #ccc;
+        }
+
+        .info-section {
+            padding: 40px 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .info-section h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #00bcd4;
+        }
+
+        .info-section p {
+            font-size: 16px;
+            color: #ddd;
+            line-height: 1.6;
+        }
+
+        footer {
+            background-color: #1a1a1a;
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .hero .logo-title {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .hero .logo-title h1 {
+                font-size: 48px;
+            }
+
+            .hero h2 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="branding">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="NetProbe Logo">
+            <h1>NetProbe</h1>
+        </div>
+        <nav>
+            <a href="/scan">Port Scanner</a>
+            <a href="/subdomain">Subdomain Scanner</a>
+            <a href="/geolookup">IP & Geolocation Lookup</a>
+            <a href="/whois">Whois Lookup</a>
+            <a href="/dnslookup">DNS Lookup</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="logo-title">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="NetProbe Logo">
+            <h1>NetProbe</h1>
+        </div>
+        <h2>Scan. Detect. Protect.</h2>
+        <p>Empowering cybersecurity professionals with essential tools to safeguard digital assets.</p>
+    </section>
+
+    <section class="info-section">
+        <h3>Why Choose NetProbe?</h3>
+        <p>
+            NetProbe delivers a modern and intuitive interface for performing essential network security operations with precision.
+            Whether you're scanning open ports, exploring subdomains, or verifying domain reputation, NetProbe keeps your investigations sharp and efficient.
+        </p>
+    </section>
+
+    <section class="info-section">
+        <h3>Stay Ahead in Cybersecurity</h3>
+        <p>
+            Cyber threats evolve constantly — NetProbe helps you stay ahead by providing instant access to tools that help you detect vulnerabilities and protect against potential exploits.
+            It’s an ideal companion for security researchers, analysts, and curious learners.
+        </p>
+    </section>
+
+    <footer>
+        &copy; 2025 NetProbe. All rights reserved.
+    </footer>
+</body>
+</html>
