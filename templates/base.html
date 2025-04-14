@@ -1,99 +1,46 @@
-<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>NetProbe</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        body {
-            background-color: #0d1117;
-            color: #c9d1d9;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        nav {
-            background-color: #161b22;
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        nav .logo {
-            display: flex;
-            align-items: center;
-        }
-
-        nav .logo img {
-            height: 40px;
-            margin-right: 10px;
-        }
-
-        nav a {
-            color: #58a6ff;
-            text-decoration: none;
-            margin-left: 15px;
-            font-size: 1rem;
-        }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-
-        .container {
-            padding: 2rem;
-            max-width: 1000px;
-            margin: auto;
-        }
-
-        h2 {
-            color: #58a6ff;
-        }
-
-        input, button {
-            padding: 10px;
-            margin: 5px 0;
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background-color: #21262d;
-            cursor: pointer;
-        }
-
-        pre {
-            background-color: #161b22;
-            padding: 1rem;
-            border-radius: 5px;
-            overflow-x: auto;
-            border: 1px solid #30363d;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NetProbe{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <nav>
-        <div class="logo">
-            <img src="../img/logo.png" alt="NetProbe Logo">
-            <a href="/">NetProbe</a>
-        </div>
-        <div class="links">
-            <a href="/scan">Port Scan</a>
-            <a href="/subdomain">Subdomains</a>
-            <a href="/geolookup">Geo Lookup</a>
-            <a href="/reversedns">Reverse DNS</a>
-            <a href="/whois">Whois</a>
-            <a href="/ssl">SSL Info</a>
+
+<body class="bg-gray-900 text-white font-sans leading-relaxed">
+    <!-- Navbar -->
+    <nav class="bg-gray-800 py-4 px-6 fixed top-0 left-0 w-full z-10 shadow-lg">
+        <div class="flex items-center justify-between">
+            <a href="/" class="text-white text-2xl font-semibold flex items-center">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="NetProbe Logo" class="h-8 mr-2">
+                NetProbe
+            </a>
+            <div class="space-x-6 text-lg">
+                <a href="/scan" class="text-white hover:text-gray-400">Port Scanner</a>
+                <a href="/subdomain" class="text-white hover:text-gray-400">Subdomain Scanner</a>
+                <a href="/geolookup" class="text-white hover:text-gray-400">IP & Geolocation Lookup</a>
+                <a href="/whois" class="text-white hover:text-gray-400">Whois Lookup</a>
+                <a href="/dnslookup" class="text-white hover:text-gray-400">DNS Lookup</a>
+            </div>
         </div>
     </nav>
 
-    <div class="container">
+    <!-- Main Content -->
+    <main class="mt-20">
         {% block content %}{% endblock %}
-    </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 py-6 mt-12">
+        <div class="container mx-auto text-center text-gray-400">
+            <p>© 2025 NetProbe. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
+
 </html>

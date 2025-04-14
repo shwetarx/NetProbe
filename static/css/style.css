@@ -1,30 +1,31 @@
+/* This will center the content on all tool pages */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
     background-color: #121212;
-    color: #f0f0f0;
-}
-
-.navbar {
-    margin-bottom: 20px;
-    background-color: #1e1e1e !important;
-}
-
-.card {
-    transition: transform 0.2s ease-in-out;
-}
-
-.card:hover {
-    transform: scale(1.02);
-}
-
-form {
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Centers the tool container */
+  .tool-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .tool-container {
+    width: 100%;
     max-width: 600px;
-}
-
-#result {
-    background-color: #1f1f1f;
-    color: #ddd;
-    padding: 15px;
-    border: 1px solid #333;
-    margin-top: 20px;
-}
+    padding: 30px 20px;
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+  }
+  
